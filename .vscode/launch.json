@@ -1,0 +1,14 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Run Glue Script",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}/sample.py",
+            "args": ["--JOB_NAME", "my-test-job"],
+            "console": "integratedTerminal",
+            "cwd": "${workspaceFolder}"
+        }
+    ]
+}
