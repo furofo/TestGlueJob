@@ -1,6 +1,6 @@
 # AWS Glue PySpark Sample Script
 
-This repository contains a simple AWS Glue PySpark script that demonstrates reading parquet files and performing basic ETL operations using AWS Glue Docker containers.
+This repository contains a simple AWS Glue PySpark script that demonstrates reading parquet files and performing basic ETL operations using AWS Glue Docker containers. Mock data and parquet files no rela data or s3 bucket used ye
 
 ## Files
 
@@ -49,20 +49,18 @@ docker pull public.ecr.aws/glue/aws-glue-libs:5
 ### Step 2: Run the Docker Container
 
 ```bash
-# Set your workspace location (current directory in this case)
-export WORKSPACE_LOCATION=$(pwd)
 
 # Optional: Set AWS profile if you have AWS credentials
 export PROFILE_NAME=default
 
-# Run the container with workspace mounted
+# Run the container with workspace mounted current working directory
 docker run -it --rm \
     -v ~/.aws:/home/hadoop/.aws \
-    -v $WORKSPACE_LOCATION:/home/hadoop/workspace/ \
+    -v $(pwd):/home/hadoop/workspace/ \
     -e AWS_PROFILE=$PROFILE_NAME \
     --name glue5_pyspark \
     public.ecr.aws/glue/aws-glue-libs:5 \
-    bash
+    pyspark
 ```
 
 ### Step 3: Attach VS Code to the Running Container
