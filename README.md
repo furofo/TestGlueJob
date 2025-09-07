@@ -46,14 +46,21 @@ The script works with a sample employee dataset containing:
 docker pull public.ecr.aws/glue/aws-glue-libs:5
 ```
 
-### Step 2: Run the Docker Container
+### Step 2: Build Custom Docker Image with Jupyter Lab
 
 ```bash
+# Build the custom image with Jupyter Lab
+docker build -t glue-jupyter .
+```
 
+### Step 3: Run the Docker Container
+
+**Option A: PySpark Interactive Shell**
+```bash
 # Optional: Set AWS profile if you have AWS credentials
 export PROFILE_NAME=default
 
-# Run the container with workspace mounted current working directory
+# Run the container with PySpark shell
 docker run -it --rm \
     -v ~/.aws:/home/hadoop/.aws \
     -v $(pwd):/home/hadoop/workspace/ \
@@ -63,7 +70,34 @@ docker run -it --rm \
     pyspark
 ```
 
-### Step 3: Attach VS Code to the Running Container
+**Option B: Jupyter Lab (Recommended for Development)**
+```bash
+# Run the custom container with Jupyter Lab
+docker run -it --rm \
+    -v ~/.aws:/home/hadoop/.aws \
+    -v $(pwd):/home/hadoop/workspace/ \
+    -e AWS_PROFILE=$PROFILE_NAME \
+    -p 8888:8888 \
+    --name glue5_pyspark \
+    glue-jupyter
+
+# Access Jupyter Lab at: http://localhost:8888/lab
+```
+
+**Option C: Bash Shell (for manual setup)**
+```bash
+# Run with bash shell for manual installation
+docker run -it --rm \
+    -v ~/.aws:/home/hadoop/.aws \
+    -v $(pwd):/home/hadoop/workspace/ \
+    -e AWS_PROFILE=$PROFILE_NAME \
+    -p 8888:8888 \
+    --name glue5_pyspark \
+    glue-jupyter \
+    bash
+```
+
+### Step 4: Attach VS Code to the Running Container
 
 1. **Start Visual Studio Code**
 2. **Open Remote Explorer**:
@@ -79,13 +113,13 @@ docker run -it --rm \
    - If a dialog appears warning about "Attaching to a container may execute arbitrary code"
    - Choose **"Got it"** to proceed
 
-### Step 4: Open the Workspace in the Container
+### Step 5: Open the Workspace in the Container
 
 1. **Open Folder**: Click "Open Folder" or press `Ctrl+K Ctrl+O`
 2. **Navigate to**: `/home/hadoop/workspace/`
 3. **Select the workspace folder**
 
-### Step 5: Configure VS Code for AWS Glue Development
+### Step 6: Configure VS Code for AWS Glue Development
 
 1. **Open Workspace Settings**:
    - Press `Ctrl+Shift+P` (Windows/Linux) or `Cmd+Shift+P` (Mac)
@@ -103,7 +137,7 @@ docker run -it --rm \
 }
 ```
 
-### Step 6: Run the AWS Glue Script with Debugger
+### Step 7: Run the AWS Glue Script with Debugger
 
 1. **Open the Run and Debug View**:
    - Click on the Run and Debug icon in the left sidebar
@@ -196,3 +230,21 @@ To extend this script for production use:
 - **Add Error Handling**: Comprehensive exception handling and logging
 - **Integrate with AWS Glue Catalog**: Use Glue Data Catalog for schema management
 - **Deploy to AWS Glue**: Upload script to AWS Glue Studio for production execution
+
+
+necessary extensions\\{
+	"extensions": [
+		"github.copilot",
+		"github.copilot-chat",
+		"ms-python.debugpy",
+		"ms-python.python",
+		"ms-python.vscode-pylance",
+		"ms-python.vscode-python-envs",
+		"ms-toolsai.jupyter",
+		"ms-toolsai.jupyter-keymap",
+		"ms-toolsai.jupyter-renderers",
+		"ms-toolsai.vscode-jupyter-cell-tags",
+		"ms-toolsai.vscode-jupyter-slideshow"
+	],
+	"workspaceFolder": "/home/hadoop/workspace"
+}
