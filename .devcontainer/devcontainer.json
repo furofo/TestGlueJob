@@ -1,0 +1,76 @@
+{
+    "name": "AWS Glue PySpark Development with Jupyter",
+    "build": {
+        "dockerfile": "../Dockerfile",
+        "context": ".."
+    },
+    
+    // Configure VS Code extensions to install automatically
+    "customizations": {
+        "vscode": {
+            "extensions": [
+                "github.copilot",
+                "github.copilot-chat",
+                "ms-python.debugpy",
+                "ms-python.python",
+                "ms-python.vscode-pylance",
+                "ms-python.vscode-python-envs",
+                "ms-toolsai.jupyter",
+                "ms-toolsai.jupyter-keymap",
+                "ms-toolsai.jupyter-renderers",
+                "ms-toolsai.vscode-jupyter-cell-tags",
+                "ms-toolsai.vscode-jupyter-slideshow"
+            ],
+            "settings": {
+                "python.defaultInterpreterPath": "/usr/bin/python3.11",
+                "python.analysis.extraPaths": [
+                    "/usr/lib/spark/python/lib/py4j-0.10.9.7-src.zip:/usr/lib/spark/python/:/usr/lib/spark/python/lib/"
+                ]
+            }
+        }
+    },
+
+    // Mount your workspace and AWS credentials
+    "mounts": [
+        "source=${localWorkspaceFolder},target=/home/hadoop/workspace,type=bind,consistency=cached",
+        "source=${env:HOME}/.aws,target=/home/hadoop/.aws,type=bind,consistency=cached"
+    ],
+
+    // Set environment variables
+    "containerEnv": {
+        "AWS_PROFILE": "${localEnv:AWS_PROFILE:default}"
+    },
+
+    // Set the workspace folder inside the container
+    "workspaceFolder": "/home/hadoop/workspace",
+
+    // Set the user to hadoop (matches the Glue container)
+    "remoteUser": "hadoop",
+
+    // Keep container running
+    "shutdownAction": "stopContainer",
+
+    // Optional: Run commands after container creation
+    "postCreateCommand": [
+        "echo 'AWS Glue Development Container Ready!'",
+        "python3 --version",
+        "spark-submit --version"
+    ],
+
+    // Optional: Forward ports if needed
+    "forwardPorts": [4040, 8080, 8888],
+    "portsAttributes": {
+        "4040": {
+            "label": "Spark UI",
+            "onAutoForward": "notify"
+        },
+        "8080": {
+            "label": "Spark Master UI",
+            "onAutoForward": "notify"
+        },
+        "8888": {
+            "label": "Jupyter Server",
+            "onAutoForward": "notify"
+        }
+    }
+}
